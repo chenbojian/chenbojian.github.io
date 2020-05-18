@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是pipenv Pipenv is a tool that aims to bring the best of all packaging worlds (bundler, composer, npm, cargo, yarn, etc.) to the Python world.   Pipenv是pip与virtualenv的结合，可以自动创建python虚拟环境，方便开发和管理依赖。 当">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How pipenv find virtual env automatically">
+<meta property="og:url" content="http://chenbojian.github.io/2018/10/29/How-pipenv-find-virtual-env-automatically/index.html">
+<meta property="og:site_name" content="CBJ&#39;s Blog">
+<meta property="og:description" content="什么是pipenv Pipenv is a tool that aims to bring the best of all packaging worlds (bundler, composer, npm, cargo, yarn, etc.) to the Python world.   Pipenv是pip与virtualenv的结合，可以自动创建python虚拟环境，方便开发和管理依赖。 当">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-10-29T06:07:54.000Z">
+<meta property="article:modified_time" content="2020-05-18T02:02:05.429Z">
+<meta property="article:author" content="chenbojian">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://chenbojian.github.io/2018/10/29/How-pipenv-find-virtual-env-automatically/"/>
+
+
+
+
+
+  <title>How pipenv find virtual env automatically | CBJ's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CBJ's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">~~~</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://chenbojian.github.io/2018/10/29/How-pipenv-find-virtual-env-automatically/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chenbojian">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CBJ's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">How pipenv find virtual env automatically</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T14:07:54+08:00">
+                2018-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是pipenv"><a href="#什么是pipenv" class="headerlink" title="什么是pipenv"></a>什么是pipenv</h2><blockquote>
+<p>Pipenv is a tool that aims to bring the best of all packaging worlds (bundler, composer, npm, cargo, yarn, etc.) to the Python world. </p>
+</blockquote>
+<p>Pipenv是pip与virtualenv的结合，可以自动创建python虚拟环境，方便开发和管理依赖。</p>
+<p>当我们使用virtualenv来创建虚拟环境的时候，我们需要制定一个目录，通常的做法是放在当前项目的env目录下，然后<code>source env/bin/activate</code>。</p>
+<p>但我们并不希望将env提交到git仓库中，那么其他人想要开发就需要重新生成这个目录，每次开发都需要执行一次<code>source</code>。pipenv为我们解决了这样的问题，它可以让你忽略virtualenv的存在，只需要使用pipenv的命令就可以拥有方便的开发环境。</p>
+<h2 id="pipenv自动创建virtualenv的convention是什么？"><a href="#pipenv自动创建virtualenv的convention是什么？" class="headerlink" title="pipenv自动创建virtualenv的convention是什么？"></a>pipenv自动创建virtualenv的convention是什么？</h2><p>在mac中可以看到pipenv生成的virtualenv默认位于像这样的目录中</p>
+<p><code>$HOME/.local/share/virtualenvs/projectname-hashcode/</code></p>
+<p>那么后面的<code>hashcode</code>究竟是如何生成的呢？我阅读了下pipenv源码研究了下。</p>
+<p>在<code>pipenv/project.py</code>中有一个方法来获得virtualenv的location</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">@property</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">virtualenv_location</span><span class="params">(<span class="keyword">self</span>)</span></span><span class="symbol">:</span></span><br><span class="line">    <span class="comment"># if VIRTUAL_ENV is set, use that.</span></span><br><span class="line">    <span class="keyword">if</span> <span class="symbol">PIPENV_VIRTUALENV:</span></span><br><span class="line">        <span class="keyword">return</span> PIPENV_VIRTUALENV</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">self</span>.<span class="symbol">_virtualenv_location:</span>  <span class="comment"># Use cached version, if available.</span></span><br><span class="line">        assert <span class="keyword">self</span>.project_directory, <span class="string">"project not created"</span></span><br><span class="line">        <span class="keyword">self</span>._virtualenv_location = <span class="keyword">self</span>.get_location_for_virtualenv()</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>._virtualenv_location</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_location_for_virtualenv</span><span class="params">(<span class="keyword">self</span>)</span></span><span class="symbol">:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">self</span>.is_venv_in_project()<span class="symbol">:</span></span><br><span class="line">        <span class="keyword">return</span> os.path.join(<span class="keyword">self</span>.project_directory, <span class="string">".venv"</span>)</span><br><span class="line"></span><br><span class="line">    name = <span class="keyword">self</span>.virtualenv_name</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">self</span>.<span class="symbol">project_directory:</span></span><br><span class="line">        venv_path = os.path.join(<span class="keyword">self</span>.project_directory, <span class="string">".venv"</span>)</span><br><span class="line">        <span class="keyword">if</span> os.path.exists(venv_path) <span class="keyword">and</span> <span class="keyword">not</span> os.path.isdir(<span class="string">".venv"</span>)<span class="symbol">:</span></span><br><span class="line">            with io.open(venv_path, <span class="string">"r"</span>) as <span class="symbol">f:</span></span><br><span class="line">                name = f.read().strip()</span><br><span class="line">            <span class="comment"># Assume file's contents is a path if it contains slashes.</span></span><br><span class="line">            <span class="keyword">if</span> looks_like_dir(name)<span class="symbol">:</span></span><br><span class="line">                <span class="keyword">return</span> vistir.compat.Path(name).absolute().as_posix()</span><br><span class="line">    <span class="keyword">return</span> str(get_workon_home().joinpath(name))</span><br></pre></td></tr></table></figure>
+
+<p>当选择在项目内生成venv时，目录名是<code>.venv</code>，默认会使用计算的<code>self.virtualenv_name</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@property</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">virtualenv_name</span><span class="params">(self)</span>:</span></span><br><span class="line">    sanitized, encoded_hash = self._get_virtualenv_hash(self.name)</span><br><span class="line">    suffix = <span class="string">"-&#123;0&#125;"</span>.format(PIPENV_PYTHON) <span class="keyword">if</span> PIPENV_PYTHON <span class="keyword">else</span> <span class="string">""</span></span><br><span class="line">    <span class="comment"># If the pipfile was located at '/home/user/MY_PROJECT/Pipfile',</span></span><br><span class="line">    <span class="comment"># the name of its virtualenv will be 'my-project-wyUfYPqE'</span></span><br><span class="line">    <span class="keyword">return</span> sanitized + <span class="string">"-"</span> + encoded_hash + suffix</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">def</span> <span class="title">_get_virtualenv_hash</span><span class="params">(self, name)</span>:</span></span><br><span class="line">    <span class="string">"""Get the name of the virtualenv adjusted for windows if needed</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns (name, encoded_hash)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_name</span><span class="params">(name, location)</span>:</span></span><br><span class="line">        name = self._sanitize(name)</span><br><span class="line">        hash = hashlib.sha256(location.encode()).digest()[:<span class="number">6</span>]</span><br><span class="line">        encoded_hash = base64.urlsafe_b64encode(hash).decode()</span><br><span class="line">        <span class="keyword">return</span> name, encoded_hash[:<span class="number">8</span>]</span><br><span class="line"></span><br><span class="line">    clean_name, encoded_hash = get_name(name, self.pipfile_location)</span><br><span class="line">    venv_name = <span class="string">"&#123;0&#125;-&#123;1&#125;"</span>.format(clean_name, encoded_hash)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># This should work most of the time for</span></span><br><span class="line">    <span class="comment">#   Case-sensitive filesystems,</span></span><br><span class="line">    <span class="comment">#   In-project venv</span></span><br><span class="line">    <span class="comment">#   "Proper" path casing (on non-case-sensitive filesystems).</span></span><br><span class="line">    <span class="keyword">if</span> (</span><br><span class="line">        fnmatch.fnmatch(<span class="string">"A"</span>, <span class="string">"a"</span>)</span><br><span class="line">        <span class="keyword">or</span> self.is_venv_in_project()</span><br><span class="line">        <span class="keyword">or</span> get_workon_home().joinpath(venv_name).exists()</span><br><span class="line">    ):</span><br><span class="line">        <span class="keyword">return</span> clean_name, encoded_hash</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Check for different capitalization of the same project.</span></span><br><span class="line">    <span class="keyword">for</span> path <span class="keyword">in</span> get_workon_home().iterdir():</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> is_virtual_environment(path):</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            env_name, hash_ = path.name.rsplit(<span class="string">"-"</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">except</span> ValueError:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> len(hash_) != <span class="number">8</span> <span class="keyword">or</span> env_name.lower() != name.lower():</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">return</span> get_name(env_name, self.pipfile_location.replace(name, env_name))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Use the default if no matching env exists.</span></span><br><span class="line">    <span class="keyword">return</span> clean_name, encoded_hash</span><br></pre></td></tr></table></figure>
+
+<p>这就是pipenv计算hash的方式，可以看到用来生成hash的是<code>self.pipfile_location</code>，让我们来确认下这个的值会是什么？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@property</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pipfile_location</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> PIPENV_PIPFILE:</span><br><span class="line">        <span class="keyword">return</span> PIPENV_PIPFILE</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> self._pipfile_location <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            loc = pipfile.Pipfile.find(max_depth=PIPENV_MAX_DEPTH)</span><br><span class="line">        <span class="keyword">except</span> RuntimeError:</span><br><span class="line">            loc = <span class="literal">None</span></span><br><span class="line">        self._pipfile_location = _normalized(loc)</span><br><span class="line">    <span class="keyword">return</span> self._pipfile_location</span><br></pre></td></tr></table></figure>
+
+<p>在<code>pipenv/patched/pipfile/api.py</code>中找到了<code>find</code>方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pipfile</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">find</span><span class="params">(max_depth=<span class="number">3</span>)</span>:</span></span><br><span class="line">        <span class="string">"""Returns the path of a Pipfile in parent directories."""</span></span><br><span class="line">        i = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> c, d, f <span class="keyword">in</span> walk_up(os.getcwd()):</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> i &lt; max_depth:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">'Pipfile'</span>:</span><br><span class="line">                    p = os.path.join(c, <span class="string">'Pipfile'</span>)</span><br><span class="line">                    <span class="keyword">if</span> os.path.isfile(p):</span><br><span class="line">                        <span class="keyword">return</span> p</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">'No Pipfile found!'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>location将会是Pipfile的absolute path，也就是项目的根目录的绝对路径，pipenv使用这个绝对路径来生成一个hash避免同名项目目录的冲突。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/04/T-SQL-magic/" rel="next" title="T-SQL magic">
+                <i class="fa fa-chevron-left"></i> T-SQL magic
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/07/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84chrome%E6%80%BB%E6%98%AF%E8%87%AA%E5%8A%A8%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6/" rel="prev" title="为什么我的chrome总是自动安装插件">
+                为什么我的chrome总是自动安装插件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">chenbojian</p>
+              <p class="site-description motion-element" itemprop="description">just a blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是pipenv"><span class="nav-number">1.</span> <span class="nav-text">什么是pipenv</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pipenv自动创建virtualenv的convention是什么？"><span class="nav-number">2.</span> <span class="nav-text">pipenv自动创建virtualenv的convention是什么？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenbojian</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
