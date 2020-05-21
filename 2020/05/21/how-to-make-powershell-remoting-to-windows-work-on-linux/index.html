@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="How to get indexes of current database?1select * from sys.indexes  How to get replication articles?1234567891011SELECT   msp.publication AS PublicationName,  msa.publisher_db AS DatabaseName,  msa.art">
+<meta name="description" content="Microsoft disabled Basic Auth over HTTP with PSRP on Linux. See here We have to use Negotiate &#x2F; Kerberos to remote to windows.  But using WinRM is very very unstable on linux. Microsoft is suggesting">
 <meta property="og:type" content="article">
-<meta property="og:title" content="T-SQL magic">
-<meta property="og:url" content="http://chenbojian.github.io/2016/11/04/T-SQL-magic/index.html">
+<meta property="og:title" content="how to make powershell remoting to windows work on linux">
+<meta property="og:url" content="http://chenbojian.github.io/2020/05/21/how-to-make-powershell-remoting-to-windows-work-on-linux/index.html">
 <meta property="og:site_name" content="CBJ&#39;s Blog">
-<meta property="og:description" content="How to get indexes of current database?1select * from sys.indexes  How to get replication articles?1234567891011SELECT   msp.publication AS PublicationName,  msa.publisher_db AS DatabaseName,  msa.art">
+<meta property="og:description" content="Microsoft disabled Basic Auth over HTTP with PSRP on Linux. See here We have to use Negotiate &#x2F; Kerberos to remote to windows.  But using WinRM is very very unstable on linux. Microsoft is suggesting">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2016-11-04T09:39:23.000Z">
-<meta property="article:modified_time" content="2020-05-18T02:02:05.430Z">
+<meta property="article:published_time" content="2020-05-21T07:12:20.000Z">
+<meta property="article:modified_time" content="2020-05-21T07:59:36.316Z">
 <meta property="article:author" content="chenbojian">
 <meta name="twitter:card" content="summary">
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://chenbojian.github.io/2016/11/04/T-SQL-magic/"/>
+  <link rel="canonical" href="http://chenbojian.github.io/2020/05/21/how-to-make-powershell-remoting-to-windows-work-on-linux/"/>
 
 
 
 
 
-  <title>T-SQL magic | CBJ's Blog</title>
+  <title>how to make powershell remoting to windows work on linux | CBJ's Blog</title>
   
 
 
@@ -232,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://chenbojian.github.io/2016/11/04/T-SQL-magic/">
+    <link itemprop="mainEntityOfPage" href="http://chenbojian.github.io/2020/05/21/how-to-make-powershell-remoting-to-windows-work-on-linux/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="chenbojian">
@@ -249,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">T-SQL magic</h1>
+          <h1 class="post-title" itemprop="name headline">how to make powershell remoting to windows work on linux</h1>
         
 
         <div class="post-meta">
@@ -261,8 +261,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-11-04T17:39:23+08:00">
-                2016-11-04
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-21T15:12:20+08:00">
+                2020-05-21
               </time>
             
 
@@ -299,24 +299,17 @@
       
 
       
-        <h2 id="How-to-get-indexes-of-current-database"><a href="#How-to-get-indexes-of-current-database" class="headerlink" title="How to get indexes of current database?"></a>How to get indexes of current database?</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> sys.indexes</span><br></pre></td></tr></table></figure>
-
-<h2 id="How-to-get-replication-articles"><a href="#How-to-get-replication-articles" class="headerlink" title="How to get replication articles?"></a>How to get replication articles?</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">  msp.publication <span class="keyword">AS</span> PublicationName,</span><br><span class="line">  msa.publisher_db <span class="keyword">AS</span> DatabaseName,</span><br><span class="line">  msa.article <span class="keyword">AS</span> ArticleName,</span><br><span class="line">  msa.source_owner <span class="keyword">AS</span> SchemaName,</span><br><span class="line">  msa.source_object <span class="keyword">AS</span> TableName</span><br><span class="line"><span class="keyword">FROM</span> distribution.dbo.MSarticles msa</span><br><span class="line"><span class="keyword">JOIN</span> distribution.dbo.MSpublications msp <span class="keyword">ON</span> msa.publication_id = msp.publication_id</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> </span><br><span class="line">  msp.publication, </span><br><span class="line">  msa.article</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> syspublications</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> sysarticles <span class="keyword">where</span> pubid = <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><a href="https://msdn.microsoft.com/en-us/library/ms179855.aspx" target="_blank" rel="noopener">More info mation get get replication related table.</a></li>
-<li><a href="https://msdn.microsoft.com/en-us/library/dn198334.aspx" target="_blank" rel="noopener">Replication infomation</a></li>
-<li><a href="https://msdn.microsoft.com/en-us/library/ms174364.aspx" target="_blank" rel="noopener">Replication stored procedure</a></li>
-</ul>
-<h2 id="Useful-replication-stored-procedure"><a href="#Useful-replication-stored-procedure" class="headerlink" title="Useful replication stored procedure."></a>Useful replication stored procedure.</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">exec sp_dropsubscription</span><br><span class="line">    @publication='**-Publication',</span><br><span class="line">    @article= N'all',</span><br><span class="line">    @subscriber = 'WIN-VPE**FSH8IJ'</span><br><span class="line"></span><br><span class="line">exec sp_droppublication</span><br><span class="line">    @publication='**-Publication'</span><br><span class="line"></span><br><span class="line">exec sp_removedbreplication @dbname='**-local'</span><br></pre></td></tr></table></figure>
-
-<h2 id="How-to-close-connect-and-drop-db-in-sql-server"><a href="#How-to-close-connect-and-drop-db-in-sql-server" class="headerlink" title="How to close connect and drop db in sql server?"></a>How to close connect and drop db in sql server?</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">database</span> [dbname] <span class="keyword">set</span> SINGLE_USER <span class="keyword">with</span> <span class="keyword">rollback</span> <span class="keyword">immediate</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">database</span> [dbname]</span><br></pre></td></tr></table></figure>
-
-<h2 id="Other-collections"><a href="#Other-collections" class="headerlink" title="Other collections"></a>Other collections</h2><ul>
-<li><a href="http://www.c-sharpcorner.com/article/50-important-queries-in-sql-server/" target="_blank" rel="noopener">SqlServer important queries</a></li>
-</ul>
+        <p>Microsoft disabled Basic Auth over HTTP with PSRP on Linux. See <a href="https://github.com/PowerShell/PowerShell/issues/6779" target="_blank" rel="noopener">here</a></p>
+<p>We have to use Negotiate / Kerberos to remote to windows. </p>
+<p>But using WinRM is very very unstable on linux. Microsoft is suggesting to install ssh on windows box.</p>
+<h2 id="With-official-powershell-docker-image"><a href="#With-official-powershell-docker-image" class="headerlink" title="With official powershell docker image"></a>With official powershell docker image</h2><p><code>docker run -it --rm mcr.microsoft.com/powershell</code></p>
+<p>We have to run <code>apt-get update &amp;&amp; apt-get install netbase</code> to make it work. The related issue is <a href="https://github.com/PowerShell/PowerShell/issues/7342#issuecomment-585808026" target="_blank" rel="noopener">here</a></p>
+<blockquote>
+<p>The microsoft/powershell image is based on Ubuntu, which does not bundle /etc/services, so you are likely being bit by this issue: microsoft/omi#623.</p>
+</blockquote>
+<h2 id="Known-dependencies-on-linux"><a href="#Known-dependencies-on-linux" class="headerlink" title="Known dependencies on linux"></a>Known dependencies on linux</h2><p>Many issues targets to <a href="https://github.com/microsoft/omi" target="_blank" rel="noopener"></a>. It has some documents about setting up <a href="https://github.com/microsoft/omi/blob/master/Unix/doc/setup-ntlm-omi.md" target="_blank" rel="noopener">ntlm</a> and <a href="https://github.com/microsoft/omi/blob/master/Unix/doc/setup-kerberos-omi.md" target="_blank" rel="noopener">kerberos</a>.</p>
+<p>The mentioned special packages are <code>krb5</code> and <code>gss-ntlmssp</code>.</p>
+<p>I am not quite sure about this part yet. Just record here for now.</p>
 
       
     </div>
@@ -341,8 +334,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/01/06/javascript-arguments/" rel="next" title="javascript-arguments">
-                <i class="fa fa-chevron-left"></i> javascript-arguments
+              <a href="/2018/11/07/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84chrome%E6%80%BB%E6%98%AF%E8%87%AA%E5%8A%A8%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6/" rel="next" title="为什么我的chrome总是自动安装插件">
+                <i class="fa fa-chevron-left"></i> 为什么我的chrome总是自动安装插件
               </a>
             
           </div>
@@ -350,10 +343,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/10/29/How-pipenv-find-virtual-env-automatically/" rel="prev" title="How pipenv find virtual env automatically">
-                How pipenv find virtual env automatically <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -476,7 +465,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-get-indexes-of-current-database"><span class="nav-number">1.</span> <span class="nav-text">How to get indexes of current database?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-get-replication-articles"><span class="nav-number">2.</span> <span class="nav-text">How to get replication articles?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Useful-replication-stored-procedure"><span class="nav-number">3.</span> <span class="nav-text">Useful replication stored procedure.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-close-connect-and-drop-db-in-sql-server"><span class="nav-number">4.</span> <span class="nav-text">How to close connect and drop db in sql server?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Other-collections"><span class="nav-number">5.</span> <span class="nav-text">Other collections</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#With-official-powershell-docker-image"><span class="nav-number">1.</span> <span class="nav-text">With official powershell docker image</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Known-dependencies-on-linux"><span class="nav-number">2.</span> <span class="nav-text">Known dependencies on linux</span></a></li></ol></div>
             
 
           </div>
